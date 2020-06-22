@@ -24,20 +24,22 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         imagePicker.delegate = self
         
         
-        
+        //blur effect to background image
         let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.regular)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         blurEffectView.frame = view.bounds
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         backgroundImage.addSubview(blurEffectView)
-
     }
     
+    //MARK:- Get prediction Result
     func giveClassification(testImage: CIImage) {
+        //create model object
         guard let modelResnet50 = try? VNCoreMLModel(for: Resnet50().model) else{
             fatalError("Something wrong with the model")
         }
         
+        //create request
         let request = VNCoreMLRequest(model: modelResnet50) { (request, error) in
             guard let results = request.results as? [VNClassificationObservation],
                 let firstPrediction = results.first
@@ -54,6 +56,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             
         }
         
+        //create handler and perform request
         let handler = VNImageRequestHandler(ciImage: testImage)
         
         do{
@@ -65,6 +68,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
     }
 
+    //MARK: - ImagePicker converts image to CIImage and pushes it for classification
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[.originalImage] as? UIImage{
             testImage.image = image
@@ -77,8 +81,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
     }
     
+    //MARK: - Camera and Gallary button handler
     @IBAction func acquirePhoto(_ sender: UIButton) {
         
+        //tag 1 is camera buttom, tag 2 is photo library
         switch sender.tag {
         case 1:
             imagePicker.sourceType = .camera
