@@ -1,2 +1,2 @@
 # Guess
-A CoreML iOS app that can classify image
+A CoreML iOS app to classify image.
